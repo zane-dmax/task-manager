@@ -1,5 +1,6 @@
 const express = require('express')
 const {User} = require('../db/sqlDB')
+const auth = require('../middleware/auth')
 const router = new express.Router()
 
 router.post('/users', async (req, res) => {
@@ -16,7 +17,8 @@ router.post('/users', async (req, res) => {
 router.post('/users/login', async (req, res) => {
     try {
         const user = await User.findByCredentials(req.body.email, req.body.password)
-        res.send(user)
+        const token = await user.generateAuthToken()
+        res.send( {user, token: token })
     } catch (e) {
         console.log(e)
         res.status(400).send(e.message)

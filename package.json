@@ -14,6 +14,7 @@
   "dependencies": {
     "bcryptjs": "^2.4.3",
     "express": "^4.16.4",
+    "jsonwebtoken": "^8.4.0",
     "mysql2": "^2.0.2",
     "sequelize": "^5.21.2",
     "validator": "^10.9.0"

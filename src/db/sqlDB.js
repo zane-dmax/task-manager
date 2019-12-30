@@ -9,8 +9,8 @@ const Task = sequelize.import('../models/task')
 
 
 //sequelize.sync({ force: true }).then(() => {
-//sequelize.sync({ alter: true }).then(() => {
-sequelize.sync().then(() => {
+sequelize.sync({ alter: true }).then(() => {
+// sequelize.sync().then(() => {
     console.log('Synced')
 }).catch((error) => {
     console.log('Error:', error)

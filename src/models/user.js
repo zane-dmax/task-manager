@@ -1,4 +1,5 @@
 const bcrypt = require('bcryptjs')
+const jwt = require('jsonwebtoken')
 module.exports = (sequelize, DataTypes) => {
     const User = sequelize.define('User', {
         name: {
@@ -28,6 +29,17 @@ module.exports = (sequelize, DataTypes) => {
             validate: {
                min: 0
             }
+        },
+        tokens: {
+            type: DataTypes.TEXT,
+            required: true,
+            defaultValue: '[]',
+            get() {
+                return JSON.parse(this.getDataValue('tokens'))
+            },
+            set(val) {
+                this.setDataValue('tokens', JSON.stringify(val))
+            }
         }
     },
     {
@@ -44,6 +56,15 @@ module.exports = (sequelize, DataTypes) => {
           }
         }
     })
+
+    User.prototype.generateAuthToken = async function() {
+        const token = jwt.sign({ id: this.id.toString() }, 'secret')
+
+        this.tokens = this.tokens.concat(token)
+        await this.save()
+
+        return token
+    }
 
     User.findByCredentials = async function(email, password) {
         const user = await User.findOne({ email })
