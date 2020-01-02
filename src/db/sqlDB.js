@@ -7,6 +7,7 @@ const sequelize = new Sequelize('test', 'User1', '1234', {
 const User = sequelize.import('../models/user')
 const Task = sequelize.import('../models/task')
 
+User.hasMany(Task, { foreignKey: 'owner' })
 
 //sequelize.sync({ force: true }).then(() => {
 sequelize.sync({ alter: true }).then(() => {

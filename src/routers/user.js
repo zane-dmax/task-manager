@@ -18,10 +18,34 @@ router.post('/users/login', async (req, res) => {
     try {
         const user = await User.findByCredentials(req.body.email, req.body.password)
         const token = await user.generateAuthToken()
-        res.send( {user, token: token })
+        res.send( {user, token })
     } catch (e) {
         console.log(e)
         res.status(400).send(e.message)
+    }
+})
+
+router.post('/users/logout', auth, async (req, res) => {
+    try {
+        req.user.tokens = req.user.tokens.filter((token) => {
+            return token.token !== req.token
+        })
+        await req.user.save()
+
+        res.send()
+    } catch (e) {
+        res.status(500).send()
+    }
+})
+
+router.post('/users/logoutAll', auth, async (req, res) => {
+    try {
+        req.user.tokens = []
+        await req.user.save()
+
+        res.send()
+    } catch (e) {
+        res.status(500).send()
     }
 })
 
@@ -50,7 +74,7 @@ router.get('/users/:id', async (req, res) => {
     }
 })
 
-router.patch('/users/:id', async (req, res) => {
+router.patch('/users/me', auth, async (req, res) => {
     const pkeys = Object.keys(req.body)
     const vkeys = Object.keys(User.rawAttributes)
     const isValid = pkeys.every((key) => vkeys.includes(key))
@@ -60,13 +84,20 @@ router.patch('/users/:id', async (req, res) => {
     }
 
     try {
-        const user = await User.findByPk(req.params.id)
-        if (!user) { return res.status(404).send() }
-        await user.update(req.body)
-        res.send(user)
+        await req.user.update(req.body)
+        res.send(req.user)
     } catch (e) {
         console.log(e)
         res.status(400).send('error')
+    }
+})
+
+router.delete('/users/me', auth, async (req, res) => {
+    try {
+        await req.user.destroy()
+        res.send(req.user)
+    } catch (e) {
+        res.status(500).send(e)
     }
 })
 
@@ -77,7 +108,7 @@ router.delete('/users/:id', async (req, res) => {
         await user.destroy()
         res.send(user)
     } catch (e) {
-        res.status(400).send(e)
+        res.status(500).send(e)
     }
 })
 

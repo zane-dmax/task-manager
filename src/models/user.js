@@ -57,6 +57,14 @@ module.exports = (sequelize, DataTypes) => {
         }
     })
 
+    // override toJSON
+    User.prototype.toJSON = function() {
+        const obj = Object.assign({}, this.get())
+        delete obj.password
+        delete obj.tokens
+        return obj
+    }
+
     User.prototype.generateAuthToken = async function() {
         const token = jwt.sign({ id: this.id.toString() }, 'secret')
 
@@ -67,8 +75,7 @@ module.exports = (sequelize, DataTypes) => {
     }
 
     User.findByCredentials = async function(email, password) {
-        const user = await User.findOne({ email })
-
+        const user = await User.findOne({ where: {email} })
         if (!user) {
             throw new Error('Invalid email/password')
         }
