@@ -15,8 +15,29 @@ router.post('/tasks', auth, async (req, res) => {
 })
 
 router.get('/tasks/me', auth, async (req, res) => {
+    var limit = 10
+    var offset = 0
+    var where = {}
+    var order = [['id','ASC']]
+
+    if (req.query.limit) { limit = parseInt(req.query.limit) }
+    if (req.query.offset) { offset = parseInt(req.query.offset) }
+
+    if (req.query.completed) {
+        where.completed = req.query.completed === 'true'
+    }
+
+    if (req.query.order) {
+        order = [req.query.order.split('_')]
+    }
+    
     try {
-        const tasks = await req.user.getTasks()
+        const tasks = await req.user.getTasks({ 
+            where,
+            limit,
+            offset,
+            order
+        })
         res.send(tasks)
     } catch (e) {
         console.log(e)
