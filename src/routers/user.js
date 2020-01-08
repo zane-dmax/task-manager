@@ -1,6 +1,7 @@
 const express = require('express')
 const {User} = require('../db/sqlDB')
 const auth = require('../middleware/auth')
+const multer = require('multer')
 const router = new express.Router()
 
 router.post('/users', async (req, res) => {
@@ -53,15 +54,6 @@ router.get('/users/me', auth, async (req, res) => {
     res.send(req.user)
 })
 
-router.get('/users', async (req, res) => {
-    try {
-        const users = await User.findAll({})
-        res.send(users)
-    } catch (e) {
-        res.status(500).send()
-    }
-})
-
 router.get('/users/:id', async (req, res) => {
     const _id = req.params.id
     
@@ -92,6 +84,14 @@ router.patch('/users/me', auth, async (req, res) => {
     }
 })
 
+const upload = multer({
+    dest: 'avatars'
+})
+
+router.post('/users/me/avatar', upload.single('avatar'), (req, res) => {
+
+})
+
 router.delete('/users/me', auth, async (req, res) => {
     try {
         await req.user.destroy()
@@ -111,5 +111,16 @@ router.delete('/users/:id', async (req, res) => {
         res.status(500).send(e)
     }
 })
+
+///////////////////////////dev only//////////////////////////////////////////
+router.get('/users', async (req, res) => {
+    try {
+        const users = await User.findAll({})
+        res.send(users)
+    } catch (e) {
+        res.status(500).send()
+    }
+})
+/////////////////////////////////////////////////////////////////////////////
 
 module.exports = router
