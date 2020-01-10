@@ -9,9 +9,9 @@ const Task = sequelize.import('../models/task')
 
 User.hasMany(Task, { foreignKey: 'owner', onUpdate: 'CASCADE' })
 
-//sequelize.sync({ force: true }).then(() => {
-sequelize.sync({ alter: true }).then(() => {
-// sequelize.sync().then(() => {
+// sequelize.sync({ force: true }).then(() => {
+// sequelize.sync({ alter: true }).then(() => {
+sequelize.sync().then(() => {
     console.log('Synced')
 }).catch((error) => {
     console.log('Error:', error)

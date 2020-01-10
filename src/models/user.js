@@ -40,6 +40,9 @@ module.exports = (sequelize, DataTypes) => {
             set(val) {
                 this.setDataValue('tokens', JSON.stringify(val))
             }
+        },
+        avatar: {
+            type: DataTypes.BLOB('medium')
         }
     },
     {
