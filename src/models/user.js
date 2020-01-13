@@ -65,6 +65,7 @@ module.exports = (sequelize, DataTypes) => {
         const obj = Object.assign({}, this.get())
         delete obj.password
         delete obj.tokens
+        delete obj.avatar
         return obj
     }
 
