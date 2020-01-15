@@ -3,7 +3,7 @@ const {User} = require('../db/sqlDB')
 const auth = async (req, res, next) => {
     try {
         const token = req.header('Authorization').replace('Bearer ', '')
-        const decoded = jwt.verify(token, 'secret')
+        const decoded = jwt.verify(token, process.env.JWT_SECRET)
         const user = await User.findByPk(decoded.id)
         if (!user || !user.tokens.some(e => e === token)) {
             throw new Error()
